@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\BizGroupA\ShowAuthorsByCondition\FilterByCondition.razor.css" />
+    <None Remove="Pages\BizGroupB\EditAuthorByOptimistic\EditAuthor.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\BizGroupA\ShowAuthorsByCondition\FilterByCondition.razor.css" />
+    <Content Include="Pages\BizGroupB\EditAuthorByOptimistic\EditAuthor.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-rc.2.21480.10" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\AzRefArc.AspNetBlazorWasm.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\Images\banner.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
