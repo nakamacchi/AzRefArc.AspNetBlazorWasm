@@ -53,20 +53,19 @@
 
     // アプリケーションサービス
     [Inject]
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
     [Inject]
-    public NavigationManager navigationManager { get; set; }
+    public NavigationManager navigationManager { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupB/EditAuthorByOptimistic/EditAuthor/GetAllStates");
+        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupB/EditAuthorByOptimistic/EditAuthor/GetAllStates"))!;
 
-        HttpResponseMessage result = await httpClient.PostAsJsonAsync(
-            "/BizGroupB/EditAuthorByOptimistic/EditAuthor/GetAuthorByAuthorId", 
-            this.AuthorId);
-        result.EnsureSuccessStatusCode();
-        AuthorData editAuthor = await result.Content.ReadFromJsonAsync<AuthorData>();
+        AuthorData editAuthor = 
+            (await httpClient.PostAsJsonFromJsonAsync<string, AuthorData>
+                ("/BizGroupB/EditAuthorByOptimistic/EditAuthor/GetAuthorByAuthorId",
+                this.AuthorId))!;
 
         // View に引き渡すデータを準備する
         vm = new EditViewModel()
@@ -82,17 +81,18 @@
         originalAuthor = editAuthor;
     }
 
-    private AuthorData originalAuthor;
+    private AuthorData? originalAuthor;
 
     private async Task UpdateData()
     {
         // 手元でデータを更新
-        originalAuthor.AuthorFirstName = vm.AuthorFirstName;
-        originalAuthor.AuthorLastName = vm.AuthorLastName;
-        originalAuthor.Phone = vm.Phone;
-        originalAuthor.State = vm.State;
+        originalAuthor!.AuthorFirstName = vm.AuthorFirstName;
+        originalAuthor!.AuthorLastName = vm.AuthorLastName;
+        originalAuthor!.Phone = vm.Phone;
+        originalAuthor!.State = vm.State;
 
         // サーバに送信してデータを更新
+
         HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             "/BizGroupB/EditAuthorByOptimistic/EditAuthor/UpdateAuthorWithConcurrencyCheck", 
             originalAuthor);

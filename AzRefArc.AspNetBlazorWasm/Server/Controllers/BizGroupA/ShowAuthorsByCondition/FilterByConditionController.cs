@@ -18,7 +18,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupA.ShowAllAuthors
 
         public FilterByConditionController(IDbContextFactory<PubsEntities> dbFactory)
         {
-            this.dbFactory = dbFactory;
+            this.dbFactory = dbFactory ?? throw new ArgumentNullException("dbFactory");
         }
 
         [HttpGet("GetAllStates")]
@@ -45,7 +45,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupA.ShowAllAuthors
                     AuthorId = a.AuthorId,
                     AuthorName = a.AuthorFirstName + " " + a.AuthorLastName,
                     Phone = a.Phone,
-                    State = a.State,
+                    State = a.State ?? "",
                     Contract = a.Contract
                 }).ToListAsync();
 

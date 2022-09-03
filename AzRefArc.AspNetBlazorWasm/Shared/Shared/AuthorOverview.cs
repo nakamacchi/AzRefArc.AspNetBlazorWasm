@@ -8,10 +8,10 @@ namespace AzRefArc.AspNetBlazorWasm.Shared.Shared
 {
     public class AuthorOverview
     {
-        public string AuthorId { get; set; }
-        public string AuthorName { get; set; }
-        public string Phone { get; set; }
-        public string State { get; set; }
+        public string AuthorId { get; set; } = String.Empty;
+        public string AuthorName { get; set; } = String.Empty;
+        public string Phone { get; set; } = String.Empty;
+        public string State { get; set; } = String.Empty;
         public bool Contract { get; set; }
     }
 }

@@ -50,11 +50,11 @@
     // 外部パラメータ
 
     // ビューモデル
-    private List<AuthorOverview> authors { get; set; }
+    private List<AuthorOverview>? authors { get; set; }
 
     // アプリケーションサービス
-    [Inject] 
-    public HttpClient httpClient { get; set; }
+    [Inject]
+    public HttpClient httpClient { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected async Task GetData()

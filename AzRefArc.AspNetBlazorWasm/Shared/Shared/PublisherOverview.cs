@@ -8,8 +8,8 @@ namespace AzRefArc.AspNetBlazorWasm.Shared.Shared
 {
     public class PublisherOverview
     {
-        public string PublisherId { get; set; }
-        public string PublisherName { get; set; }
-        public List<TitleOverview> TitleOverviews { get; set; }
+        public string PublisherId { get; set; } = String.Empty;
+        public string PublisherName { get; set; } = String.Empty;
+        public List<TitleOverview> TitleOverviews { get; set; } = new List<TitleOverview>();
     }
 }

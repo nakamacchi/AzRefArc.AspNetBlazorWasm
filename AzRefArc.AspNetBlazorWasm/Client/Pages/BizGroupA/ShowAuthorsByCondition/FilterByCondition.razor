@@ -68,12 +68,12 @@
 
     // サービス
     [Inject]
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupA/ShowAuthorsByCondition/FilterByCondition/GetAllStates");
+        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupA/ShowAuthorsByCondition/FilterByCondition/GetAllStates"))!;
         states.Add("", "");
     }
 
@@ -91,10 +91,16 @@
                 State = vm.State
             };
 
+@*        
         HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             "/BizGroupA/ShowAuthorsByCondition/FilterByCondition/GetAuthorsByCondition", 
             request);
         response.EnsureSuccessStatusCode();
         authors = await response.Content.ReadFromJsonAsync<List<AuthorOverview>>();
+*@
+
+        authors = await httpClient.PostAsJsonFromJsonAsync<GetAuthorsByConditionRequest, List<AuthorOverview>>
+                    ("/BizGroupA/ShowAuthorsByCondition/FilterByCondition/GetAuthorsByCondition", request);
+
     }
 }

@@ -61,13 +61,13 @@
 
     // アプリケーションサービス
     [Inject] 
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupA/ShowAuthorsByState/FilterByState/GetAllStates");
-        selectedKey = states.First().Key;
+        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupA/ShowAuthorsByState/FilterByState/GetAllStates"))!;
+        selectedKey = states!.First().Key;
     }
 
     protected async Task GetData()
@@ -76,7 +76,7 @@
             "/BizGroupA/ShowAuthorsByState/FilterByState/GetAuthorsByState", 
             selectedKey);
         response.EnsureSuccessStatusCode();
-        authors = await response.Content.ReadFromJsonAsync<List<AuthorOverview>>();
+        authors = (await response.Content.ReadFromJsonAsync<List<AuthorOverview>>())!;
     }
 
     private string currentSortKey = "";
@@ -86,7 +86,7 @@
     {
         if (authors != null)
         {
-            Func<AuthorOverview, string> keySelector = null;
+            Func<AuthorOverview, string>? keySelector = null;
             if (sortKey == "AuthorId") keySelector = a => a.AuthorId;
             if (sortKey == "AuthorName") keySelector = a => a.AuthorName;
             if (sortKey == "Phone") keySelector = a => a.AuthorName;
@@ -97,12 +97,12 @@
             {
                 if (currentSortKey == sortKey && isCurrentSortDecending == false)
                 {
-                    authors = authors.OrderByDescending(keySelector).ToList();
+                    authors = authors.OrderByDescending(keySelector!).ToList();
                     isCurrentSortDecending = true;
                 }
                 else
                 {
-                    authors = authors.OrderBy(keySelector).ToList();
+                    authors = authors.OrderBy(keySelector!).ToList();
                     currentSortKey = sortKey;
                     isCurrentSortDecending = false;
                 }

@@ -47,13 +47,13 @@
     // 外部パラメータ
 
     // ビューモデル
-    private List<AuthorOverview> authors = new List<AuthorOverview>();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
 
     // アプリケーションサービス
     [Inject]
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
     [Inject]
-    public NavigationManager navigationManager { get; set; }
+    public NavigationManager navigationManager { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()

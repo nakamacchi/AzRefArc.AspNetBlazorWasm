@@ -18,7 +18,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupB.EditAuthorByOpt
 
         public EditAuthorController(IDbContextFactory<PubsEntities> dbFactory)
         {
-            this.dbFactory = dbFactory;
+            this.dbFactory = dbFactory ?? throw new ArgumentNullException("dbFactory");
         }
 
         [HttpGet("GetAllStates")]
@@ -44,7 +44,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupB.EditAuthorByOpt
                     City = a.City,
                     Contract = a.Contract,
                     Phone = a.Phone,
-                    State = a.State,
+                    State = a.State ?? "",
                     Zip = a.Zip,
                     RowVersion = a.RowVersion
                 }).FirstOrDefaultAsync();
@@ -79,7 +79,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupB.EditAuthorByOpt
                 try
                 {
                     // 同時実行制御（Timestamp 列で制御）
-                    pubs.SaveChanges();
+                    await pubs.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {

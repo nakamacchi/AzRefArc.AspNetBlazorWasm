@@ -10,14 +10,11 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupB.EditAuthorByOpt
     public class ListAuthorsController : ControllerBase
     {
         // [Inject] 属性(プロパティインジェクション)が使えないのでコンストラクタ Injection を使う
-        // https://stackoverflow.com/questions/38459625/property-injection-in-asp-net-core
-        // https://www.infoworld.com/article/3603572/dependency-injection-best-practices-for-aspnet-core-mvc-5.html
-
         private IDbContextFactory<PubsEntities> dbFactory { get; set; }
 
         public ListAuthorsController(IDbContextFactory<PubsEntities> dbFactory)
         {
-            this.dbFactory = dbFactory;
+            this.dbFactory = dbFactory ?? throw new ArgumentNullException("dbFactory");
         }
 
         [HttpGet("GetAuthors")]
@@ -33,7 +30,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupB.EditAuthorByOpt
                                 AuthorId = a.AuthorId,
                                 AuthorName = a.AuthorFirstName + " " + a.AuthorLastName,
                                 Phone = a.Phone,
-                                State = a.State,
+                                State = a.State ?? "",
                                 Contract = a.Contract
                             };
                 result = await query.ToListAsync();

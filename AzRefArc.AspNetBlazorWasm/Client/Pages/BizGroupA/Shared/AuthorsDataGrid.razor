@@ -1,4 +1,14 @@
 ﻿
+@if (Authors == null)
+{
+    <p>まだデータがありません。</p>
+}
+else if (Authors.Count == 0)
+{
+    <p>データが1件もありません。</p>
+}
+else
+{
 <div class="table-responsive">
     <table class="table table-condensed table-striped table-hover">
         <thead>
@@ -11,34 +21,35 @@
             </tr>
         </thead>
         <tbody>
-            @if (Authors != null) foreach (var a in Authors)
-                {
-                    <tr>
-                        <td>@a.AuthorId</td>
-                        <td>@a.AuthorName</td>
-                        <td>@a.Phone</td>
-                        <td>@a.State</td>
-                        <td>@if (a.Contract)
-                            {
-                                <input type="checkbox" disabled checked /> <span>契約あり</span>
-                            }
-                            else
-                            {
-                                <input type="checkbox" disabled /> <span>契約なし</span>
+            @foreach (var a in Authors)
+            {
+                <tr>
+                    <td>@a.AuthorId</td>
+                    <td>@a.AuthorName</td>
+                    <td>@a.Phone</td>
+                    <td>@a.State</td>
+                    <td>@if (a.Contract)
+                        {
+                            <input type="checkbox" disabled checked /> <span>契約あり</span>
+                        }
+                        else
+                        {
+                            <input type="checkbox" disabled /> <span>契約なし</span>
 
-                            }
-                        </td>
-                    </tr>
-                }
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
+}
 
 @code {
     // 外部パラメータ
     [Parameter]
-    public List<AuthorOverview> Authors { get; set; } = new List<AuthorOverview>();
-
+    public List<AuthorOverview>? Authors { get; set; }
+        
     private string currentSortKey = "";
     private bool isCurrentSortDecending = false; 
 
@@ -46,7 +57,7 @@
     {
         if (Authors != null)
         {
-            Func<AuthorOverview, string> keySelector = null;
+            Func<AuthorOverview, string>? keySelector = null;
             if (sortKey == "AuthorId") keySelector = a => a.AuthorId;
             if (sortKey == "AuthorName") keySelector = a => a.AuthorName;
             if (sortKey == "Phone") keySelector = a => a.AuthorName;
@@ -57,12 +68,12 @@
             {
                 if (currentSortKey == sortKey && isCurrentSortDecending == false)
                 {
-                    Authors = Authors.OrderByDescending(keySelector).ToList();
+                    Authors = Authors.OrderByDescending(keySelector!).ToList();
                     isCurrentSortDecending = true;
                 }
                 else
                 {
-                    Authors = Authors.OrderBy(keySelector).ToList();
+                    Authors = Authors.OrderBy(keySelector!).ToList();
                     currentSortKey = sortKey;
                     isCurrentSortDecending = false;
                 }

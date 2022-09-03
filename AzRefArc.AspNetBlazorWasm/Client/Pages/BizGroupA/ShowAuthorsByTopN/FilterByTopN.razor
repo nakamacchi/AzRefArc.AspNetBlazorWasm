@@ -23,11 +23,11 @@
 
     // ビューモデル
     private FilterByTopNViewModel vm = new FilterByTopNViewModel();
-    private List<AuthorOverview> authors = new List<AuthorOverview>();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
 
     // アプリケーションサービス
     [Inject]
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
 
     // イベントハンドラ(業務ロジック)
     protected async Task GetData()

@@ -15,7 +15,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupA.ShowAuthorsBySt
 
         public FilterByTopNController(IDbContextFactory<PubsEntities> dbFactory)
         {
-            this.dbFactory = dbFactory;
+            this.dbFactory = dbFactory ?? throw new ArgumentNullException("dbFactory");
         }
 
         [HttpPost("GetAuthorsByTopN")]
@@ -34,7 +34,7 @@ namespace AzRefArc.AspNetBlazorWasm.Server.Controllers.BizGroupA.ShowAuthorsBySt
                                 AuthorId = a.AuthorId,
                                 AuthorName = a.AuthorFirstName + " " + a.AuthorLastName,
                                 Phone = a.Phone,
-                                State = a.State,
+                                State = a.State ?? "",
                                 Contract = a.Contract
                             });
                 result = await query.ToListAsync();

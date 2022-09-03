@@ -56,26 +56,22 @@
 
     // ビューモデル
     string selectedKey = "";
-    SortedDictionary<string, string> states = new SortedDictionary<string, string>();
-    private List<AuthorOverview> authors = new List<AuthorOverview>();
+    SortedDictionary<string, string>? states = new SortedDictionary<string, string>();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
 
     // アプリケーションサービス
     [Inject]
-    public HttpClient httpClient { get; set; }
+    public HttpClient httpClient { get; set; } = null!;
 
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
         states = await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/BizGroupA/ShowAuthorsByState/FilterByState/GetAllStates");
-        selectedKey = states.First().Key;
+        selectedKey = states!.First().Key;
     }
 
     protected async Task GetData()
     {
-        HttpResponseMessage response = await httpClient.PostAsJsonAsync(
-            "/BizGroupA/ShowAuthorsByState/FilterByState/GetAuthorsByState", 
-            selectedKey);
-        response.EnsureSuccessStatusCode();
-        authors = await response.Content.ReadFromJsonAsync<List<AuthorOverview>>();
+        authors = await httpClient.PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/BizGroupA/ShowAuthorsByState/FilterByState/GetAuthorsByState", selectedKey);
     }
 }
