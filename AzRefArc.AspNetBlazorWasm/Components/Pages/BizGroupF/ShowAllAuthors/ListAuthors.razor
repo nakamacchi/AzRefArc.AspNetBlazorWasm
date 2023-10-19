@@ -1,0 +1,63 @@
+﻿@page "/BizGroupF/ShowAllAuthors/ListAuthors"
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using System.Linq;
+
+@* アプリケーションサービス *@
+@inject HttpClient httpClient
+
+<PageTitle>著者データ一覧</PageTitle>
+
+<h3>著者データ一覧</h3>
+
+<h5>データを取得します。</h5>
+
+<input type="button" @onclick="GetData" class="btn btn-primary" value="データ取得" />
+<input type="button" @onclick="ResetData" class="btn btn-warning" value="リセット" />
+
+<hr />
+
+@if (authors == null)
+{
+    <p>データをロード中です。</p>
+}
+else if (authors.Count == 0)
+{
+    <p>データがありません。</p>
+}
+else
+{
+    <div class="table-responsive">
+        <QuickGrid Items="@authors.AsQueryable()">
+            <PropertyColumn Property="@(a => a.AuthorId)" Title="著者ID" Sortable="true" />
+            <TemplateColumn Title="著者名" Sortable="true" SortBy="@(GridSort<AuthorOverview>.ByAscending(a => a.AuthorName))">
+                @(context.AuthorName)
+            </TemplateColumn>
+            <PropertyColumn Property="@(a => a.Phone)" Title="電話番号" Sortable="true" />
+            <PropertyColumn Property="@(a => a.State)" Title="州" Sortable="true" />
+            <TemplateColumn Title="契約有無" Sortable="true" SortBy="@(GridSort<AuthorOverview>.ByAscending(a => a.Contract))">
+                <input type="checkbox" disabled checked="@(context.Contract)" />
+                @(context.Contract ? "契約あり" : "契約なし")
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+}
+
+@code {
+    // 外部パラメータ
+
+    // ビューモデル
+    private List<AuthorOverview>? authors { get; set; } = new List<AuthorOverview>();
+
+    // イベントハンドラ(アプリケーション処理)
+    protected async Task GetData()
+    {
+        authors = null;
+        authors = await httpClient.GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupD/ShowAllAuthors/ListAuthors/GetAuthors");
+    }
+
+    protected void ResetData()
+    {
+        authors = new();
+    }
+}

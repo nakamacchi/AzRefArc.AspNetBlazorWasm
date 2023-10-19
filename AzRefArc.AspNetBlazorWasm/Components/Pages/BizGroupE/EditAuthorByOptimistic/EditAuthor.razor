@@ -1,0 +1,113 @@
+﻿@page "/BizGroupE/EditAuthorByOptimistic/EditAuthor/{AuthorId}"
+@using AzRefArc.AspNetWebApi.Shared.BizGroupE.EditAuthorByOptimistic.EditAuthor
+
+@* アプリケーションサービス *@
+@inject HttpClient httpClient
+@inject NavigationManager navigationManager
+
+<PageTitle>著者データの編集</PageTitle>
+
+<h3>著者データの編集</h3>
+<h5>著者データを修正してください。</h5>
+
+<EditForm Model="@vm" OnValidSubmit="@UpdateData">
+    <DataAnnotationsValidator />
+
+    <dl>
+        <dt>著者 ID</dt>
+        <dd>@vm.AuthorId</dd>
+
+        <dt>著者名(名)</dt>
+        <dd><InputText @bind-Value="vm.AuthorFirstName" class="form-text" /></dd>
+
+        <dt>著者名(姓)</dt>
+        <dd><InputText @bind-Value="vm.AuthorLastName" class="form-text" /></dd>
+
+        <dt>電話番号</dt>
+        <dd><InputText @bind-Value="vm.Phone" class="form-text" /></dd>
+
+        <dt>州</dt>
+        <dd>
+            <InputSelect @bind-Value="vm.State" class="form-select-sm" >
+                @if (states != null) foreach (var item in states)
+                {
+                    <option value="@item.Key">@item.Value</option>
+                }
+            </InputSelect>
+        </dd>
+    </dl>
+
+    <button type="submit" class="btn btn-primary">更新</button>
+    <button type="button" @onclick="GoToListAuthorsPage" class="btn btn-warning">キャンセル</button>
+
+    <ValidationSummary />
+    <span>@concurrentUpdateErrorMessage</span>
+    
+</EditForm>
+
+@code {
+    // 外部パラメータ
+    [Parameter]
+    public string AuthorId { get; set; } = "";
+
+    // ビューモデル
+    private EditViewModel vm = new EditViewModel();
+    private SortedDictionary<string, string> states = new SortedDictionary<string, string>();
+    private string concurrentUpdateErrorMessage = "";
+
+    // イベントハンドラ(アプリケーション処理)
+    protected override async Task OnInitializedAsync()
+    {
+        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/GetAllStates"))!;
+
+        AuthorData editAuthor = 
+            (await httpClient.PostAsJsonFromJsonAsync<string, AuthorData>
+                ("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/GetAuthorByAuthorId",
+                this.AuthorId))!;
+
+        // View に引き渡すデータを準備する
+        vm = new EditViewModel()
+        {
+            AuthorId = editAuthor.AuthorId,
+            AuthorFirstName = editAuthor.AuthorFirstName,
+            AuthorLastName = editAuthor.AuthorLastName,
+            Phone = editAuthor.Phone,
+            State = editAuthor.State
+        };
+
+        // データ更新時に再利用する(楽観同時実行制御処理用)
+        originalAuthor = editAuthor;
+    }
+
+    private AuthorData? originalAuthor;
+
+    private async Task UpdateData()
+    {
+        // 手元でデータを更新
+        originalAuthor!.AuthorFirstName = vm.AuthorFirstName;
+        originalAuthor!.AuthorLastName = vm.AuthorLastName;
+        originalAuthor!.Phone = vm.Phone;
+        originalAuthor!.State = vm.State;
+
+        // サーバに送信してデータを更新
+        UpdateAuthorWithConcurrencyCheckResult result = await httpClient.PostAsJsonFromJsonAsync<AuthorData, UpdateAuthorWithConcurrencyCheckResult>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/UpdateAuthorWithConcurrencyCheck", originalAuthor);
+
+        if (result == UpdateAuthorWithConcurrencyCheckResult.UpdateFailureByOptimisticConcurrencyConflict)
+        {
+            concurrentUpdateErrorMessage = "他のユーザがすでに当該データを更新しています。もう一度はじめからやり直してください。";
+            return;
+        }
+
+        if (result == UpdateAuthorWithConcurrencyCheckResult.Success)
+        {
+            // 正常に登録できた場合には、一覧画面に帰る
+            navigationManager.NavigateTo("/BizGroupE/EditAuthorByOptimistic/ListAuthors");
+        }
+    }
+
+    private void GoToListAuthorsPage()
+    {
+        navigationManager.NavigateTo("/BizGroupE/EditAuthorByOptimistic/ListAuthors");
+    }
+
+}

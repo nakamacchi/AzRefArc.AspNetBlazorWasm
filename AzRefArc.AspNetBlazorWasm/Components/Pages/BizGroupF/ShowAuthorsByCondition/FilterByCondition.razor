@@ -1,0 +1,101 @@
+﻿@page "/BizGroupF/ShowAuthorsByCondition/FilterByCondition"
+@using AzRefArc.AspNetWebApi.Shared.BizGroupD.ShowAuthorsByCondition.FilterByCondition
+@using AzRefArc.AspNetBlazorWasm.Components.Pages.BizGroupF.Shared
+
+@* アプリケーションサービス *@
+@inject HttpClient httpClient
+
+<PageTitle>複雑な条件指定による著者一覧表示</PageTitle>
+
+<h3>複雑な条件指定による著者一覧表示</h3>
+<h5>検索条件を指定してください。</h5>
+
+<EditForm Model="@vm" OnValidSubmit="@GetData">
+    <DataAnnotationsValidator />
+
+    <dl>
+        <dt>
+            <InputCheckbox @bind-Value="vm.IsEnabledAuFname" class="form-check-input" /> 著者名(名)による検索
+        </dt>
+        <dd>
+            <InputText @bind-Value="vm.AuFname" class="form-text" />
+        </dd>
+
+        <dt>
+            <InputCheckbox @bind-Value="vm.IsEnabledPhone" class="form-check-input" /> 電話番号による検索
+        </dt>
+        <dd>
+            <InputText @bind-Value="vm.Phone" class="form-text" />
+        </dd>
+
+        <dt>
+            <InputCheckbox @bind-Value="vm.IsEnabledState" class="form-check-input" /> 州による検索
+        </dt>
+        <dd>
+            <InputSelect @bind-Value="vm.State" class="form-select-sm">
+                @if (states != null) foreach (var item in states)
+                {
+                    <option value="@item.Key">@item.Value</option>
+                }
+            </InputSelect>
+        </dd>
+
+        <dt>
+            <InputCheckbox @bind-Value="vm.IsEnabledContract" class="form-check-input" /> 契約有無による検索
+        </dt>
+        <dd>
+            <InputSelect @bind-Value="vm.ContractString" class="form-select-sm">
+                <option value=""></option>
+                <option value="true">契約あり</option>
+                <option value="false">契約なし</option>
+            </InputSelect>
+        </dd>
+
+    </dl>
+
+    <button type="submit" class="btn btn-primary">検索</button>
+
+    <ValidationSummary />
+    
+</EditForm>
+
+<hr />
+
+<AuthorsQuickGrid Authors="authors" />
+
+@code {
+    // 外部パラメータ
+
+    // ビューモデル
+    private FindConditionViewModel vm = new FindConditionViewModel();
+    private SortedDictionary<string, string> states = new SortedDictionary<string, string>();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
+
+    // イベントハンドラ(アプリケーション処理)
+    protected override async Task OnInitializedAsync()
+    {
+        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByCondition/FilterByCondition/GetAllStates"))!;
+        states.Add("", "");
+    }
+
+    private async Task GetData()
+    {
+        authors = null;
+
+        GetAuthorsByConditionRequest request = new GetAuthorsByConditionRequest()
+            {
+                IsEnabledAuFname = vm.IsEnabledAuFname,
+                IsEnabledContract = vm.IsEnabledContract,
+                IsEnabledPhone = vm.IsEnabledPhone,
+                IsEnabledState = vm.IsEnabledState,
+                AuFname = vm.AuFname,
+                Contract = vm.Contract,
+                Phone = vm.Phone,
+                State = vm.State
+            };
+
+        authors = await httpClient.PostAsJsonFromJsonAsync<GetAuthorsByConditionRequest, List<AuthorOverview>>
+                    ("/api/BizGroupD/ShowAuthorsByCondition/FilterByCondition/GetAuthorsByCondition", request);
+
+    }
+}

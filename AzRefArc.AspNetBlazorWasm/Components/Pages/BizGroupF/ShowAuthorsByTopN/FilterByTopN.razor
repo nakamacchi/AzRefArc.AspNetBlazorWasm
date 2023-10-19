@@ -1,0 +1,39 @@
+﻿@page "/BizGroupF/ShowAuthorsByTopN/FilterByTopN"
+@using AzRefArc.AspNetBlazorWasm.Components.Pages.BizGroupD.Shared
+@using AzRefArc.AspNetBlazorWasm.Components.Pages.BizGroupF.Shared
+
+@* アプリケーションサービス *@
+@inject HttpClient httpClient
+
+<PageTitle>件数に基づくデータ取得</PageTitle>
+
+<h3>件数に基づくデータ取得</h3>
+<h5>取得する件数を指定してください。</h5>
+
+<EditForm Model="@vm" OnValidSubmit="@GetData">
+    <DataAnnotationsValidator />
+
+    表示する件数 <InputText @bind-Value="vm.Count" class="form-text" /> <button type="submit">表示</button>
+
+    <ValidationSummary />
+    
+</EditForm>
+
+<hr />
+
+<AuthorsQuickGrid Authors="authors" />
+
+@code {
+    // 外部パラメータ
+
+    // ビューモデル
+    private FilterByTopNViewModel vm = new FilterByTopNViewModel();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
+
+    // イベントハンドラ(業務ロジック)
+    protected async Task GetData()
+    {
+        authors = null;
+        authors = await httpClient.PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByTopN/FilterByTopN/GetAuthorsByTopN", vm.Count);
+    }
+}
