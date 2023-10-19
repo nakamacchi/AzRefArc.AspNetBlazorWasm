@@ -17,19 +17,25 @@
         </div>
 
         <article class="content px-4">
-            <ErrorBoundary @ref="boundary">
-                <ChildContent>
-                    @Body
-                </ChildContent>
-                <ErrorContent>
-                    アプリケーションでエラーが発生しました。
-                    @if (env.IsDevelopment())
-                    {
-                        <hr />
-                        @((MarkupString)GetExceptionString(context).Replace("\n", "<br />"))
-                    }
-                </ErrorContent>
-            </ErrorBoundary>
+            @if (env.IsDevelopment())
+            {
+                <ErrorBoundary @ref="boundary">
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+                    <ErrorContent>
+                            <p>
+                                アプリケーションで未処理例外が発生しました。アプリをリロードしてください。
+                            </p>
+                            <hr />
+                            @((MarkupString)GetExceptionString(context).Replace("\n", "<br />"))
+                    </ErrorContent>
+                </ErrorBoundary>
+            }
+            else
+            {
+                @Body                
+            }
         </article>
     </main>
 </div>
@@ -43,7 +49,7 @@
     ErrorBoundary? boundary;
     protected override void OnParametersSet()
     {
-        boundary?.Recover();
+        // boundary?.Recover();
     }
 
     public string GetExceptionString(Exception ex)
