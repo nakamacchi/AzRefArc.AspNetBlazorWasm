@@ -13,5 +13,13 @@ namespace AzRefArc.AspNetBlazorWasm.Utilities
             TResult? result = await response.Content.ReadFromJsonAsync<TResult>();
             return result!;
         }
+
+        public static readonly string HTTP_CLIENT_NAME_WITH_RETRY = "HttpClientWithRetry";
+
+        public static HttpClient CreateClientWithRetry(this IHttpClientFactory httpClientFactory)
+        {
+            return httpClientFactory.CreateClient(HTTP_CLIENT_NAME_WITH_RETRY);
+        }
+
     }
 }

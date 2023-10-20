@@ -2,7 +2,7 @@
 @using AzRefArc.AspNetBlazorWasm.Components.Pages.BizGroupD.Shared
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>件数に基づくデータ取得</PageTitle>
 
@@ -33,6 +33,6 @@
     protected async Task GetData()
     {
         authors = null;
-        authors = await httpClient.PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByTopN/FilterByTopN/GetAuthorsByTopN", vm.Count);
+        authors = await httpClientFactory.CreateClientWithRetry().PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByTopN/FilterByTopN/GetAuthorsByTopN", vm.Count);
     }
 }

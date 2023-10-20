@@ -4,7 +4,7 @@
 
 @inject IWebAssemblyHostEnvironment env
 @inject ILogger<MainLayout> logger
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <div class="page">
     <div class="sidebar">
@@ -58,7 +58,7 @@
         logger!.LogError(detailedException);
         InvokeAsync(async () =>
         {
-            _ = await httpClient.PostAsJsonAsync<string>("/api/Utilities/ReportClientError/UploadErrorInformation", detailedException);
+            _ = await httpClientFactory.CreateClientWithRetry().PostAsJsonAsync<string>("/api/Utilities/ReportClientError/UploadErrorInformation", detailedException);
         });
         return detailedException;
     }

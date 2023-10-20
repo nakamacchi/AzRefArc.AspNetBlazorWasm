@@ -1,7 +1,7 @@
 ﻿@page "/BizGroupD/ShowAllAuthors/ListAuthors"
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>著者データ一覧</PageTitle>
 
@@ -70,7 +70,7 @@ else
     protected async Task GetData()
     {
         authors = null;
-        authors = await httpClient.GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupD/ShowAllAuthors/ListAuthors/GetAuthors");
+        authors = await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupD/ShowAllAuthors/ListAuthors/GetAuthors");
     }
 
     protected void ResetData()

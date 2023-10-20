@@ -1,7 +1,7 @@
 ﻿@page "/BizGroupE/EditAuthorByOptimistic/ListAuthors"
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 @inject NavigationManager navigationManager
 
 <PageTitle>著者データの編集</PageTitle>
@@ -67,7 +67,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         authors = null;
-        authors = await httpClient.GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupE/EditAuthorByOptimistic/ListAuthors/GetAuthors");
+        authors = await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupE/EditAuthorByOptimistic/ListAuthors/GetAuthors");
     }
 
     private void GoToEdit(string authorId)
