@@ -11,3 +11,6 @@
     <InvariantGlobalization>false</InvariantGlobalization>
     <UserSecretsId>9e0fb557-c77a-4e0a-b65c-c87f649a2620</UserSecretsId>
   </PropertyGroup>
+
+  ・WASM と共有する必要のある型情報については Shared プロジェクトに実装
+  　（事前単体チェックロジックに関する構造体クラスを Shared プロジェクトにて実装して共有）
