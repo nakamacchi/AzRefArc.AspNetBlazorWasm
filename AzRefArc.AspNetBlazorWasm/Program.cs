@@ -22,6 +22,9 @@ namespace AzRefArc.AspNetBlazorWasm
                 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(baseAddress) });
             }
 
+            // 例外ログのファイル出力機能の追加
+            builder.Services.AddSingleton<ILoggerProvider, ExceptionFileLoggerProvider>();
+
             await builder.Build().RunAsync();
         }
     }
