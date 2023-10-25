@@ -2,7 +2,7 @@
 @using AzRefArc.AspNetWebApi.Shared.BizGroupE.EditAuthorByOptimistic.EditAuthor
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 @inject NavigationManager navigationManager
 
 <PageTitle>著者データの編集</PageTitle>
@@ -58,10 +58,10 @@
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/GetAllStates"))!;
+        states = (await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/GetAllStates"))!;
 
         AuthorData editAuthor = 
-            (await httpClient.PostAsJsonFromJsonAsync<string, AuthorData>
+            (await httpClientFactory.CreateClientWithRetry().PostAsJsonFromJsonAsync<string, AuthorData>
                 ("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/GetAuthorByAuthorId",
                 this.AuthorId))!;
 
@@ -90,7 +90,7 @@
         originalAuthor!.State = vm.State;
 
         // サーバに送信してデータを更新
-        UpdateAuthorWithConcurrencyCheckResult result = await httpClient.PostAsJsonFromJsonAsync<AuthorData, UpdateAuthorWithConcurrencyCheckResult>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/UpdateAuthorWithConcurrencyCheck", originalAuthor);
+        UpdateAuthorWithConcurrencyCheckResult result = await httpClientFactory.CreateClient().PostAsJsonFromJsonAsync<AuthorData, UpdateAuthorWithConcurrencyCheckResult>("/api/BizGroupE/EditAuthorByOptimistic/EditAuthor/UpdateAuthorWithConcurrencyCheck", originalAuthor);
 
         if (result == UpdateAuthorWithConcurrencyCheckResult.UpdateFailureByOptimisticConcurrencyConflict)
         {

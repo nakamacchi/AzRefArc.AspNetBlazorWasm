@@ -1,7 +1,7 @@
 ﻿@page "/BizGroupD/ShowAuthorsByState/FilterByStateWithSort"
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>州による著者一覧表示</PageTitle>
 
@@ -76,14 +76,14 @@ else
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAllStates"))!;
+        states = (await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAllStates"))!;
         selectedKey = states!.First().Key;
     }
 
     protected async Task GetData()
     {
         authors = null;
-        authors = await httpClient.PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAuthorsByState", selectedKey);
+        authors = await httpClientFactory.CreateClientWithRetry().PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAuthorsByState", selectedKey);
     }
 
     private string currentSortKey = "";

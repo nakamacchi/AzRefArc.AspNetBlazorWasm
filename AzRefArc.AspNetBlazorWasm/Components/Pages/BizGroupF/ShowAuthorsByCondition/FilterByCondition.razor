@@ -3,7 +3,7 @@
 @using AzRefArc.AspNetBlazorWasm.Components.Pages.BizGroupF.Shared
 
 @* アプリケーションサービス *@
-@inject HttpClient httpClient
+@inject IHttpClientFactory httpClientFactory
 
 <PageTitle>複雑な条件指定による著者一覧表示</PageTitle>
 
@@ -74,7 +74,7 @@
     // イベントハンドラ(アプリケーション処理)
     protected override async Task OnInitializedAsync()
     {
-        states = (await httpClient.GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByCondition/FilterByCondition/GetAllStates"))!;
+        states = (await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByCondition/FilterByCondition/GetAllStates"))!;
         states.Add("", "");
     }
 
@@ -94,7 +94,7 @@
                 State = vm.State
             };
 
-        authors = await httpClient.PostAsJsonFromJsonAsync<GetAuthorsByConditionRequest, List<AuthorOverview>>
+        authors = await httpClientFactory.CreateClientWithRetry().PostAsJsonFromJsonAsync<GetAuthorsByConditionRequest, List<AuthorOverview>>
                     ("/api/BizGroupD/ShowAuthorsByCondition/FilterByCondition/GetAuthorsByCondition", request);
 
     }
