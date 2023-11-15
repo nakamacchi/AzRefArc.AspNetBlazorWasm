@@ -1,0 +1,89 @@
+﻿@page "/BizGroupD/ShowAuthorsByState/FilterByState"
+
+@* アプリケーションサービス *@
+@inject IHttpClientFactory httpClientFactory
+
+<PageTitle>州による著者一覧表示</PageTitle>
+
+<h3>州による著者一覧表示</h3>
+<h5>州を指定してください。</h5>
+
+<select @bind="selectedKey" class="form-select-sm">
+    @if (states != null) foreach(var item in states)
+    {
+        <option value="@item.Key">@item.Value</option>
+    }
+</select>
+
+<input type="button" @onclick="GetData" class="btn btn-primary" value="データ取得" />
+
+<hr />
+
+@if (authors == null)
+{
+    <p>データをロード中です...</p>
+}
+else if (authors.Count == 0)
+{
+    <p>データがありません。</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-condensed table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>著者ID</th>
+                    <th>著者名</th>
+                    <th>電話番号</th>
+                    <th>州</th>
+                    <th>契約有無</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in authors)
+                {
+                    <tr>
+                        <td>@a.AuthorId</td>
+                        <td>@a.AuthorName</td>
+                        <td>@a.Phone</td>
+                        <td>@a.State</td>
+                        <td>
+                            @if (a.Contract)
+                            {
+                                <input type="checkbox" disabled checked /> <span>契約あり</span>
+                            }
+                            else
+                            {
+                                <input type="checkbox" disabled /> <span>契約なし</span>
+
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    // 外部パラメータ
+
+    // ビューモデル
+    string selectedKey = "";
+    SortedDictionary<string, string>? states = new SortedDictionary<string, string>();
+    private List<AuthorOverview>? authors = new List<AuthorOverview>();
+
+    // イベントハンドラ(アプリケーション処理)
+    protected override async Task OnInitializedAsync()
+    {
+        states = await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<SortedDictionary<string, string>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAllStates");
+        selectedKey = states!.First().Key;
+    }
+
+    protected async Task GetData()
+    {
+        authors = null;
+        authors = await httpClientFactory.CreateClientWithRetry().PostAsJsonFromJsonAsync<string, List<AuthorOverview>>("/api/BizGroupD/ShowAuthorsByState/FilterByState/GetAuthorsByState", selectedKey);
+    }
+}

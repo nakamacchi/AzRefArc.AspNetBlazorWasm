@@ -1,0 +1,51 @@
+﻿@page "/"
+
+<PageTitle>ASP.NET Core Blazor WASM 業務サンプルアプリケーション</PageTitle>
+
+<div class="row">
+    <img src="/Images/banner.png" class="img-responsive" style="margin: 0 auto;" /> @* img-responsive にすると画像サイズが動的に変化。margin: 0 auto; によりセンタリング *@
+</div>
+
+<div style="height: 10px"></div>
+
+<div class="row">
+    <div>
+        <h5 id="bizGroupA">ASP.NET Core Blazor WASM による業務サンプルアプリ</h5>
+        <ul>
+            <li id="BizGroupD">
+                WASM 参照系アプリ
+                <ul>
+                    <li><a href="/BizGroupD/ShowAllAuthors/ListAuthors">全著者データの表示</a></li>
+                    <li><a href="/BizGroupD/ShowAuthorsByState/FilterByState">州による著者データ検索</a></li>
+                    <li><a href="/BizGroupD/ShowAuthorsByState/FilterByStateWithSort">州による著者データ検索(ソート機能つき)</a></li>
+                    <li><a href="/BizGroupD/ShowAuthorsByState/FilterByStateWithSort2">州による著者データ検索(ソート機能つき・部品再利用)</a></li>
+                    <li><a href="/BizGroupD/ShowAuthorsByTopN/FilterByTopN">件数による著者データ検索</a></li>
+                    <li><a href="/BizGroupD/ShowAuthorsByCondition/FilterByCondition">複雑な条件による著者データ検索</a></li>
+                </ul>
+            </li>
+            <li id="BizGroupE">
+                WASM 更新系アプリ
+                <ul>
+                    <li><a href="/BizGroupE/EditAuthorByOptimistic/ListAuthors">著者データの編集 (楽観同時実行制御)</a></li>
+                </ul>
+            </li>
+            <li id="BizGroupF">
+                WASM 参照系アプリ (QuickGrid 利用)
+                <ul>
+                    <li><a href="/BizGroupF/ShowAllAuthors/ListAuthors">全著者データの表示</a></li>
+                    <li><a href="/BizGroupF/ShowAuthorsByState/FilterByState">州による著者データ検索</a></li>
+                    <li><a href="/BizGroupF/ShowAuthorsByTopN/FilterByTopN">件数による著者データ検索</a></li>
+                    <li><a href="/BizGroupF/ShowAuthorsByCondition/FilterByCondition">複雑な条件による著者データ検索</a></li>
+                </ul>
+            </li>
+            <li id="Utilities">
+                ユーティリティ
+                <ul>
+                    <li><a href="/Utilities/DiagnosticsWASM">WASM 診断情報</a></li>
+                    <li><a href="/Utilities/RaiseException">サンプル例外発生</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+

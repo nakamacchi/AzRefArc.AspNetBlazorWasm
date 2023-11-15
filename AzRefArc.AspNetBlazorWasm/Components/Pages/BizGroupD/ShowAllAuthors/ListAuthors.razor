@@ -1,0 +1,80 @@
+﻿@page "/BizGroupD/ShowAllAuthors/ListAuthors"
+
+@* アプリケーションサービス *@
+@inject IHttpClientFactory httpClientFactory
+
+<PageTitle>著者データ一覧</PageTitle>
+
+<h3>著者データ一覧</h3>
+
+<h5>データを取得します。</h5>
+
+<input type="button" @onclick="GetData" class="btn btn-primary" value="データ取得" />
+<input type="button" @onclick="ResetData" class="btn btn-warning" value="リセット" />
+
+<hr />
+
+@if (authors == null)
+{
+    <p>データをロード中です...</p>
+}
+else if (authors.Count == 0)
+{
+    <p>データがありません。</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-condensed table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>著者ID</th>
+                    <th>著者名</th>
+                    <th>電話番号</th>
+                    <th>州</th>
+                    <th>契約有無</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in authors)
+                    {
+                        <tr>
+                            <td>@a.AuthorId</td>
+                            <td>@a.AuthorName</td>
+                            <td>@a.Phone</td>
+                            <td>@a.State</td>
+                            <td>@if (a.Contract)
+                                {
+                                    <input type="checkbox" disabled checked /> <span>契約あり</span>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" disabled /> <span>契約なし</span>
+
+                                }
+                            </td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    // 外部パラメータ
+
+    // ビューモデル
+    private List<AuthorOverview>? authors { get; set; } = new List<AuthorOverview>();
+
+    // イベントハンドラ(アプリケーション処理)
+    protected async Task GetData()
+    {
+        authors = null;
+        authors = await httpClientFactory.CreateClientWithRetry().GetFromJsonAsync<List<AuthorOverview>>("/api/BizGroupD/ShowAllAuthors/ListAuthors/GetAuthors");
+    }
+
+    protected void ResetData()
+    {
+        authors = new List<AuthorOverview>();
+    }
+}
