@@ -24,7 +24,8 @@ namespace AzRefArc.AspNetWebApi
                                   policy =>
                                   {
                                       policy.WithOrigins("https://localhost:7041",
-                                                          "http://www.contoso.com")
+                                                          "https://azrefarc-aspnetblazorwasm.azurewebsites.net")
+                                      //.AllowAnyOrigin()
                                       .AllowAnyHeader().AllowAnyMethod(); // ‚±‚ê‚ð‚µ‚Ä‚¨‚©‚È‚¢‚Æ GET ‚Ì CORS ‚µ‚©’Ê‚ç‚È‚¢
                                   });
             });
@@ -59,10 +60,10 @@ namespace AzRefArc.AspNetWebApi
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
-
             // https://learn.microsoft.com/ja-jp/aspnet/core/security/cors?view=aspnetcore-8.0
             app.UseCors(MyAllowSpecificOrigins);
+
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
             app.MapControllers();
