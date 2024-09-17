@@ -24,7 +24,7 @@ namespace AzRefArc.AspNetWebApi
                                   policy =>
                                   {
                                       policy.WithOrigins("https://localhost:7041",
-                                                          "https://azrefarc-aspnetblazorwasm.azurewebsites.net")
+                                                          "https://azrefarc-blazorwasm-windows.azurewebsites.net")
                                       //.AllowAnyOrigin()
                                       .AllowAnyHeader().AllowAnyMethod(); // ‚±‚ê‚ð‚µ‚Ä‚¨‚©‚È‚¢‚Æ GET ‚Ì CORS ‚µ‚©’Ê‚ç‚È‚¢
                                   });
